@@ -1,22 +1,11 @@
-import unittest
-from main import add, subtract, multiply, divide
-
-class TestMath(unittest.TestCase):
-    def test_add(self):
-        self.assertEqual(add(10, 5), 15)
-        self.assertNotEqual(add(10, -5), 15)
-
-    def test_subtract(self):
-        self.assertEqual(subtract(10, 5), 5)
-        self.assertNotEqual(subtract(10, -5), 5)
-
-    def test_multiply(self):
-        self.assertNotEqual(multiply(10, 5), 55)
-        self.assertEqual(multiply(10, -5), -50)
-
-    def test_divide(self):
-        self.assertEqual(divide(10, 8), 2)
-        self.assertNotEqual(divide(10, -5), 2)
-
-if __name__ == '__main__':
-    unittest.main()
+import pytest
+from main import init_db, add_user, get_user
+@pytest.fixture  # фикстура - подготовка среды к тестам
+def db_conn():
+    conn = init_db()
+    yield conn # yield возвращает объект соединения conn для дальнейшего использования
+    conn.close()
+def test_add_or_get_user(db_conn):
+    add_user(db_conn, "Sasha", 30)  # добавляем пользователя
+    user = get_user(db_conn, "Sasha")  # получаем пользователя и сохраняем его в user
+    assert user == (1, "Sasha", 30)  # проверяем, что полученный пользователь соответствует ожидаемому
